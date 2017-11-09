@@ -1,0 +1,55 @@
+#!/usr/bin/env php
+<?php
+
+//--------------------------------------------------------------------------
+// Define The Application Paths
+//--------------------------------------------------------------------------
+
+defined('DS') || define('DS', DIRECTORY_SEPARATOR);
+
+/** Define the absolute paths for configured directories. */
+define('ROOTDIR', realpath(__DIR__) .DS);
+
+define('APPDIR', ROOTDIR .'app' .DS);
+
+define('PUBLICDIR', ROOTDIR .'webroot' .DS);
+
+//--------------------------------------------------------------------------
+// Register The Auto Loader
+//--------------------------------------------------------------------------
+
+require ROOTDIR .'vendor' .DS .'autoload.php';
+
+//--------------------------------------------------------------------------
+// Turn On The Lights
+//--------------------------------------------------------------------------
+
+$app = require_once APPDIR .'Start.php';
+
+//--------------------------------------------------------------------------
+// Load The Forge Console Application
+//--------------------------------------------------------------------------
+
+use Nova\Console\Application as ConsoleApplication;
+
+
+$app->setRequestForConsoleEnvironment();
+
+$forge = ConsoleApplication::start($app);
+
+//--------------------------------------------------------------------------
+// Run The Forge Application
+//--------------------------------------------------------------------------
+
+$status = $forge->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput,
+    new Symfony\Component\Console\Output\ConsoleOutput
+);
+
+//--------------------------------------------------------------------------
+// Shutdown The Application
+//--------------------------------------------------------------------------
+
+$app->terminate();
+
+exit($status);
